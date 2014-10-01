@@ -793,6 +793,25 @@
     //#define SUPPRESS_TELEMETRY_PAGE_R
 
   /********************************************************************/
+  /****                    fast telemetry reply                    ****/
+  /********************************************************************/
+    #define FASTTELEMETRY               // uncomment to activate fast telemetry in reply to MSP_SET_RAW_RC
+    #define FASTTELEMETRY_SERIAL_PORT 3 // must be 0 on Pro Mini and single serial boards; Set to your choice on any Mega based board
+  /* 8 '$'
+     8 'P'
+     8 analog.vbat
+     8 GPS_numSat
+    32 GPS_coord[LAT]
+    32 GPS_coord[LON]
+    16 GPS_speed
+    32 alt.EstAlt
+    16 alt.vario
+    16 att.angle[0] (roll)
+    16 att.angle[1] (pitch)
+    16 att.heading (yaw)
+     8 checksum (header is not included) */
+
+  /********************************************************************/
   /****                             RSSI                           ****/
   /********************************************************************/
     //#define RX_RSSI

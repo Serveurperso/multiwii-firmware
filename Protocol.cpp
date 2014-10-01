@@ -240,6 +240,13 @@ void s_struct_w(uint8_t *cb,uint8_t siz) {
   while(siz--) *cb++ = read8();
 }
 
+void s_struct_rc(uint8_t *cb,uint8_t siz) {
+  #ifdef FASTTELEMETRY
+    fastTelemetry();
+  #endif
+  while(siz--) *cb++ = read8();
+}
+
 #ifndef SUPPRESS_ALL_SERIAL_MSP
 void evaluateCommand() {
   uint32_t tmp=0; 
@@ -249,8 +256,8 @@ void evaluateCommand() {
      headSerialError(0); // we don't have any custom msp currently, so tell the gui we do not use that
      break;
    case MSP_SET_RAW_RC:
-     s_struct_w((uint8_t*)&rcSerial,16);
-     rcSerialCount = 50; // 1s transition 
+     s_struct_rc((uint8_t*)&rcSerial,16);
+     rcSerialCount = 1000; // 1s transition 
      break;
    #if GPS && !defined(I2C_GPS)
    case MSP_SET_RAW_GPS:
@@ -677,6 +684,28 @@ void evaluateOtherData(uint8_t sr) {
     }
   #endif // SUPPRESS_OTHER_SERIAL_COMMANDS
 }
+
+#ifdef FASTTELEMETRY
+void fastTelemetry() {
+  #if !defined(PROMINI)
+    CURRENTPORT=FASTTELEMETRY_SERIAL_PORT;
+  #endif
+  serialize8('$');
+  serialize8('P');
+  checksum[CURRENTPORT] = 0;
+  serialize8(analog.vbat);
+  serialize8(GPS_numSat);
+  serialize32(GPS_coord[LAT]);
+  serialize32(GPS_coord[LON]);
+  serialize16(GPS_speed);
+  serialize32(alt.EstAlt);
+  serialize16(alt.vario);
+  serialize16(att.angle[0]);
+  serialize16(att.angle[1]);
+  serialize16(att.heading);
+  tailSerialReply();
+}
+#endif
 
 #ifdef DEBUGMSG
 void debugmsg_append_str(const char *str) {

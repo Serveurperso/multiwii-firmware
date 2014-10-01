@@ -2,6 +2,7 @@
 #define PROTOCOL_H_
 
 void serialCom();
+void fastTelemetry();
 void debugmsg_append_str(const char *str);
 
 #endif /* PROTOCOL_H_ */

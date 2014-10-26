@@ -143,7 +143,10 @@ void inline headSerialError(uint8_t s) {
 }
 
 void tailSerialReply() {
-  serialize8(checksum[CURRENTPORT]);UartSendData(CURRENTPORT);
+  serialize8(checksum[CURRENTPORT]);
+  serialize8(1); // transmitChannel
+  serialize8(0); // receiveChannel
+  UartSendData(CURRENTPORT);
 }
 
 void serializeNames(PGM_P s) {
@@ -703,7 +706,6 @@ void fastTelemetry() {
   serialize16(att.angle[0]);
   serialize16(att.angle[1]);
   serialize16(att.heading);
-  tailSerialReply();
 }
 #endif
 
